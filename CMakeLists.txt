@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.21)
 project(riscv-sim)
 
 add_subdirectory(flags)
+add_subdirectory(third_party)
 
 add_executable(${PROJECT_NAME})
 
