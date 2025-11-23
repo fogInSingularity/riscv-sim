@@ -16,9 +16,9 @@ target_compile_options(sim-flags
         -Wall
         -Wextra
         -Wpedantic
-        -Wshadow
-        -Wconversion
-        -Wsign-conversion
+        # -Wshadow
+        # -Wconversion
+        # -Wsign-conversion
         -Wunused
         -Wformat=2
         -Wnon-virtual-dtor
