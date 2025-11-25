@@ -2,6 +2,7 @@
 #define RV_SIM_HPP_
 
 #include <cstddef>
+#include <memory>
 #include <utility>
 #include <vector>
 #include <array>
@@ -31,9 +32,23 @@ class RVSim {
     explicit RVSim(ParsedElf* parsed_elf)
         : memory_{std::move(parsed_elf->mem)}, 
         ip_{parsed_elf->entry_point}, 
-        should_stop_{false} 
+        should_stop_{false},
+        xregs{0},
+        fregs{0}
     {
+        memory_.AddSegment(
+            MemorySegm{
+                isa::kStackBase, 
+                isa::kStackTop, 
+                std::make_unique<isa::MemByte[]>(isa::kStackSize),
+                true,
+                true,
+                false
+            }  
+        );
+
         xregs[hlp::FromEnum(isa::XRegAlias::gp)] = parsed_elf->global_ptr;
+        xregs[hlp::FromEnum(isa::XRegAlias::sp)] = isa::kStackTop - sizeof(isa::Register);
     }
 
     int Execute();

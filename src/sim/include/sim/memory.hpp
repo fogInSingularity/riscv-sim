@@ -32,6 +32,10 @@ class Memory {
 
     void CopyGuestToHost(isa::Address from_addr, isa::MemByte* to_buf, size_t size); // write syscall
     void CopyHostToGuest(isa::Address to_addr, const isa::MemByte* from_buf, size_t size); // read syscall
+    
+    void AddSegment(MemorySegm segm) {
+        memory_.push_back(std::move(segm));
+    }
 };
 
 } // namespace sim

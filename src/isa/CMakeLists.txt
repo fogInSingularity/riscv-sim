@@ -3,6 +3,7 @@ add_library(isa STATIC)
 target_sources(isa
     PRIVATE
         source/ext_i_cb.cpp 
+        source/ext_m_cb.cpp
         source/mnemonics.cpp
         source/syscall_handler.cpp
 )

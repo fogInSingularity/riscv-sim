@@ -9,7 +9,9 @@ namespace isa {
 using MemByte = uint8_t;
 using MemSize = uint32_t;
 using Register = uint32_t;
+using WRegister = uint64_t;
 using IRegister = int32_t;
+using WIRegister = int64_t;
 using Address = uint32_t;
 using UndecodedInsn = uint32_t;
 using InsnField = uint32_t;
@@ -18,6 +20,10 @@ constexpr size_t kStepSize = sizeof(UndecodedInsn);
 
 constexpr size_t kNumXRegisters = 32;
 constexpr size_t kNumFRegisters = 32;
+
+constexpr size_t kStackSize = 1u << 20; // 1 mb
+constexpr Address kStackTop = 1u << 30; // some high address
+constexpr Address kStackBase = kStackTop - kStackSize;
 
 // register aliases
 // https://riscv.org/wp-content/uploads/2024/12/riscv-calling.pdf

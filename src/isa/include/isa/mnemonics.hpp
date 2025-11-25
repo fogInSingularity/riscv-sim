@@ -7,6 +7,7 @@ enum class InsnMnemonic {
 
 #define MNEMONIC(name, mask, match) name,
 #include "isa/ext_i.inc"
+#include "isa/ext_m.inc"
 #undef MNEMONIC
     
     kCount,

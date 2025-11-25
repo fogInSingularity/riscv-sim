@@ -3,8 +3,6 @@
 #include <cassert>
 #include <climits>
 #include <cstdint>
-#include <bit>
-#include <type_traits>
 #include <limits>
 
 #include "helpers/trace_calls.hpp"
@@ -12,67 +10,11 @@
 #include "isa/isa_defs.hpp"
 #include "isa/rv_insn.hpp"
 #include "isa/syscall_handler.hpp"
+#include "isa/isa_hlp.hpp"
 
 namespace isa {
 
 namespace {
-
-IRegister RegToIReg(Register val) {
-    return std::bit_cast<IRegister>(val);
-}
-
-Register IRegToReg(IRegister val) {
-    return std::bit_cast<Register>(val);
-}
-
-// FIXME
-template <typename ToT, typename FromT>
-constexpr ToT TruncHigh(FromT x) {
-    static_assert(std::is_integral_v<FromT>, "FromT must be an integral type");
-    static_assert(std::is_integral_v<ToT>,   "ToT must be an integral type");
-    static_assert(
-        sizeof(ToT) < sizeof(FromT),
-        "ToT must be strictly smaller than FromT"
-    );
-
-    using UnsignedFrom = std::make_unsigned_t<FromT>;
-    using UnsignedTo   = std::make_unsigned_t<ToT>;
-
-    constexpr UnsignedTo  to_max   = std::numeric_limits<UnsignedTo>::max();
-    constexpr UnsignedFrom mask    = static_cast<UnsignedFrom>(to_max);
-
-    const UnsignedFrom ux = static_cast<UnsignedFrom>(x);
-    const UnsignedTo   uy = static_cast<UnsignedTo>(ux & mask);
-
-    return static_cast<ToT>(uy);
-}
-
-template <typename ToT, typename FromT>
-constexpr ToT SignExtT(FromT x) {
-    static_assert(std::is_unsigned_v<FromT>, "FromT must be unsigned");
-    static_assert(std::is_unsigned_v<ToT>,   "ToT must be unsigned");
-
-    constexpr unsigned from_bits = sizeof(FromT) * CHAR_BIT;
-    constexpr unsigned to_bits   = sizeof(ToT) * CHAR_BIT;
-
-    static_assert(
-        from_bits < to_bits,
-        "SignExtT expects ToT to be strictly wider than FromT"
-    );
-
-    constexpr ToT one = ToT{1};
-    constexpr ToT value_mask = (one << from_bits) - one;
-    constexpr ToT sign_bit = one << (from_bits - 1);
-    constexpr ToT extend_mask = ~value_mask;
-
-    ToT v = static_cast<ToT>(x) & value_mask;
-
-    if (v & sign_bit) {
-        v |= extend_mask;  // fill high bits
-    }
-
-    return v;
-}
 
 constexpr uint32_t ArithmRightShift(uint32_t x, unsigned shift) {
     constexpr unsigned num_bits = sizeof(x) * CHAR_BIT;
@@ -272,7 +214,7 @@ void CallbackLB(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(
         insn.Rd(),
-        SignExtT<uint32_t>(mem_val)
+        SignExt<uint32_t>(mem_val)
     );
 
     sim->Ip() += kStepSize;
@@ -289,7 +231,7 @@ void CallbackLH(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(
         insn.Rd(),
-        SignExtT<uint32_t>(mem_val)
+        SignExt<uint32_t>(mem_val)
     );
 
     sim->Ip() += kStepSize;
@@ -576,15 +518,19 @@ void CallbackAND(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) 
 void CallbackFENCE(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
-    
-    assert(!"instruction not implemented");
+
+    spdlog::info("FENCE instruction encountered");
+
+    sim->Ip() += kStepSize;
 }
 
 void CallbackFENCE_I(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
     
-    assert(!"instruction not implemented");
+    spdlog::info("FENCE_I instruction encountered");
+
+    sim->Ip() += kStepSize;
 }
 
 void CallbackECALL(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
