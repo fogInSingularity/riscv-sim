@@ -2,5 +2,8 @@ build
 *.log
 compile_commands.json
 .cache
+
+# tests:
 *.o
 *.x
+tests/build

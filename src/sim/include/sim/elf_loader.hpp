@@ -5,11 +5,17 @@
 #include <string>
 
 #include "sim/memory_segm.hpp"
-#include "sim/sim_defs.hpp"
+#include "isa/isa_defs.hpp"
 
 namespace sim {
 
-[[nodiscard]] std::vector<MemorySegm> LoadElf(const std::string& elf_path, Address* entry_point);
+struct ParsedElf {
+    std::vector<MemorySegm> mem;
+    isa::Address entry_point;
+    isa::Address global_ptr;
+};
+
+[[nodiscard]] ParsedElf LoadElf(const std::string& elf_path);
 
 } // namespace sim
 

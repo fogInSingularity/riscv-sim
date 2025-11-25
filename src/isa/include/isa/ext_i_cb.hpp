@@ -2,11 +2,11 @@
 #define EXT_I_CB_HPP_
 
 #include "sim/rv_sim.hpp"
-#include "sim/sim_defs.hpp"
+#include "isa/isa_defs.hpp"
 
 namespace isa {
 
-#define MNEMONIC(name, mask, match) void Callback##name(sim::RVSim* sim, [[maybe_unused]] sim::UndecodedInsn insn);
+#define MNEMONIC(name, mask, match) void Callback##name(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn);
 #include "isa/ext_i.inc"
 #undef MNEMONIC
 

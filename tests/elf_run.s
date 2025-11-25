@@ -1,11 +1,8 @@
 .section .text
-.global _start
+.globl _start
 
 _start:
-    # Manually set a0 to 0 to indicate success.
-    # We use 'addi' because it is the most fundamental I-type instruction.
-    # x10 = x0 + 0
-    # addi x10, x0, 0
-    
-    # Halt the simulator
-    ebreak
+    addi a0, zero, 0      # exit code = 0
+    addi a7, zero, 93     # syscall: exit
+    ecall
+

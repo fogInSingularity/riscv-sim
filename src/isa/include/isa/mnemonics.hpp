@@ -13,6 +13,8 @@ enum class InsnMnemonic {
     kInvalid,
 };
 
+const char* MnemonicToStr(InsnMnemonic mnem);
+
 } // namespace isa
 
 #endif // MNEMONICS_HPP_

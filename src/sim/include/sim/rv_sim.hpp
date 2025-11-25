@@ -1,31 +1,90 @@
 #ifndef RV_SIM_HPP_
 #define RV_SIM_HPP_
 
+#include <cstddef>
 #include <utility>
 #include <vector>
 #include <array>
+#include <cassert>
 
+#include <spdlog/spdlog.h>
+
+#include "helpers/common.hpp"
 #include "sim/memory_segm.hpp"
 #include "sim/memory.hpp"
-#include "sim/sim_defs.hpp"
+#include "isa/isa_defs.hpp"
+#include "sim/elf_loader.hpp"
 
 namespace sim {
 
-class RVSim { 
+class RVSim {
   private:
+    using XRegArrayT = std::array<isa::Register, isa::kNumXRegisters>;
+    using FRegArrayT = std::array<isa::Register, isa::kNumFRegisters>;
+   
     Memory memory_;
-    Address ip_;
+    isa::Address ip_;
     bool should_stop_;
-    std::array<Register, kNumXRegisters> xregs;
-    // std::array<Register, kNumFRegisters> fregs;
+    XRegArrayT xregs;
+    FRegArrayT fregs;
   public:
-    RVSim(std::vector<MemorySegm> memory, Address entry_point)
-        : memory_{std::move(memory)}, ip_{entry_point}, should_stop_{false} {}
+    explicit RVSim(ParsedElf* parsed_elf)
+        : memory_{std::move(parsed_elf->mem)}, 
+        ip_{parsed_elf->entry_point}, 
+        should_stop_{false} 
+    {
+        xregs[hlp::FromEnum(isa::XRegAlias::gp)] = parsed_elf->global_ptr;
+    }
 
-    void Execute();
+    int Execute();
 
     bool& ShouldStop() {
         return should_stop_;
+    }
+
+    void SetXReg(size_t index, isa::Register value) {
+        assert(index < isa::kNumXRegisters);
+        
+        spdlog::trace("set x reg: index {}, value {}", index, value);
+
+        if (index == hlp::FromEnum(isa::XRegAlias::zero)) { return; }
+
+        xregs[index] = value;
+    }
+    
+    isa::Register GetXReg(size_t index) {
+        assert(index < isa::kNumXRegisters);
+
+        if (index == hlp::FromEnum(isa::XRegAlias::zero)) { return 0; }
+
+        return xregs[index];
+    }
+
+    void SetFReg(size_t index, isa::Register value) {
+        assert(index < isa::kNumFRegisters);
+
+        fregs[index] = value;
+    }
+
+    isa::Register GetFReg(size_t index) {
+        assert(index < isa::kNumFRegisters);
+
+        return fregs[index];
+    }
+
+    auto& Ip() {
+        return ip_;
+    }
+
+    auto& Mem() {
+        return memory_;
+    }
+
+    void Trace() {
+        spdlog::trace("trace sim:");
+        for (size_t i = 0; i < isa::kNumXRegisters; i++) {
+            spdlog::trace("Reg {}: {}", i, xregs[i]);
+        }
     }
 };
 

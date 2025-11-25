@@ -5,14 +5,14 @@
 #include <cstdlib>
 #include <memory>
 
-#include "sim/sim_defs.hpp"
+#include "isa/isa_defs.hpp"
 
 namespace sim {
 
 struct MemorySegm {
-    Address start_addr;
-    Address end_addr;
-    std::unique_ptr<MemByte[]> data;
+    isa::Address start_addr;
+    isa::Address end_addr;
+    std::unique_ptr<isa::MemByte[]> data;
 
     // permissions
     bool r_permission;

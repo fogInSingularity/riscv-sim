@@ -5,19 +5,23 @@
 #include <spdlog/spdlog.h>
 
 #include "helpers/traceable_exception.hpp"
+#include "helpers/common.hpp"
 #include "isa/mnemonics.hpp"
 #include "sim/decode.hpp"
 #include "sim/dispatch.hpp"
-#include "sim/sim_defs.hpp"
+#include "isa/isa_defs.hpp"
 
 namespace sim {
     
-void RVSim::Execute() {
-
+int RVSim::Execute() {
     while (!should_stop_) {
-        sim::UndecodedInsn undecoded_insn = memory_.Fetch(ip_);
+        // Trace();
+
+        isa::UndecodedInsn undecoded_insn = memory_.Fetch(ip_);
+        spdlog::trace("undecoded insn: {:#04x}", undecoded_insn);
+
         isa::InsnMnemonic mnem = Decode(undecoded_insn);
-        spdlog::trace("Mnemonic: {}", static_cast<int>(mnem));
+        spdlog::trace("Mnemonic: {}", isa::MnemonicToStr(mnem));
         if (mnem == isa::InsnMnemonic::kInvalid) {
             throw hlp::TraceableException{"Unkown instuction encountered"};
         }
@@ -25,6 +29,8 @@ void RVSim::Execute() {
         
         instr_callback(this, undecoded_insn);
     }
+
+    return xregs[hlp::FromEnum(isa::XRegAlias::a0)];
 }
 
 } // namespace sim

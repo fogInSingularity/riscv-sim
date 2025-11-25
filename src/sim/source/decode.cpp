@@ -4,12 +4,12 @@
 #include <cstddef>
 
 #include "isa/mnemonics.hpp"
-#include "sim/sim_defs.hpp"
+#include "isa/isa_defs.hpp"
 
 namespace sim {
 
-using InsnMask = sim::UndecodedInsn;
-using InsnMatch = sim::UndecodedInsn;
+using InsnMask = isa::UndecodedInsn;
+using InsnMatch = isa::UndecodedInsn;
 
 struct InsnEntry {
     isa::InsnMnemonic mnem;
@@ -23,7 +23,7 @@ constexpr std::array<InsnEntry, static_cast<size_t>(isa::InsnMnemonic::kCount)> 
 #undef MNEMONIC
 }};
 
-isa::InsnMnemonic Decode(sim::UndecodedInsn insn) {
+isa::InsnMnemonic Decode(isa::UndecodedInsn insn) {
     for (auto& entry: InsnDecodeTable) {
         if ((insn & entry.mask) == entry.match) {
             return entry.mnem;

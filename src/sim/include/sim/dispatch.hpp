@@ -2,14 +2,14 @@
 #define DISPATCH_HPP_
 
 #include "isa/mnemonics.hpp"
-#include "sim/sim_defs.hpp"
+#include "isa/isa_defs.hpp"
 #include "sim/rv_sim.hpp"
 
 namespace sim {
 
 // For dispatch table to work correctly, name of function should be Callback<InsnName>
 
-using InsnCallback = void (*) (RVSim* sim, UndecodedInsn instr);
+using InsnCallback = void (*) (RVSim* sim, isa::UndecodedInsn instr);
 
 InsnCallback GetInsnCallback(isa::InsnMnemonic mnem);
 

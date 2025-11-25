@@ -10,11 +10,13 @@
 #include "sim/elf_loader.hpp"
 #include "sim/memory_segm.hpp"
 #include "sim/rv_sim.hpp"
-#include "sim/sim_defs.hpp"
+#include "isa/isa_defs.hpp"
 
 int main(int argc, const char* argv[]) {
     auto logger = spdlog::basic_logger_mt("sim", "sim.log", true);
     spdlog::set_default_logger(logger);
+
+    spdlog::set_pattern("[%l] %v"); // remove time and name(%n) from log
 
 #if defined (NDEBUG)
     spdlog::set_level(spdlog::level::info);
@@ -37,11 +39,10 @@ int main(int argc, const char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    sim::Address entry_point = 0;
-    std::vector<sim::MemorySegm> segms;
-    
+    sim::ParsedElf parsed_elf{};
+
     try {
-        segms = sim::LoadElf(argv[1], &entry_point);
+        parsed_elf = sim::LoadElf(argv[1]);
     } catch (const hlp::TraceableException& e) {
         std::cerr << e.what() << std::endl;
         spdlog::debug("Catch exception in main: {}", e.what());
@@ -49,8 +50,8 @@ int main(int argc, const char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    sim::RVSim sim{std::move(segms), entry_point};
+    sim::RVSim sim{&parsed_elf};
 
-    sim.Execute();
+    return sim.Execute();
 }
 

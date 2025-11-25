@@ -11,23 +11,24 @@ add_subdirectory(src/helpers)
 add_subdirectory(src/sim)
 add_subdirectory(src/isa)
 
-add_executable(${PROJECT_NAME})
+add_executable(riscv-sim.x)
 
-target_sources(${PROJECT_NAME}
+target_sources(riscv-sim.x
     PRIVATE
         src/main.cpp
 )
 
-target_include_directories(${PROJECT_NAME}
+target_include_directories(riscv-sim.x
     PRIVATE
         include/
 )
 
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(riscv-sim.x
     PRIVATE 
         sim-flags
         helpers
         sim
+        isa
 
         spdlog
 )

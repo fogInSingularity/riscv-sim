@@ -2,11 +2,11 @@
 #define DECODE_HPP_
 
 #include "isa/mnemonics.hpp"
-#include "sim/sim_defs.hpp"
+#include "isa/isa_defs.hpp"
 
 namespace sim {
     
-isa::InsnMnemonic Decode(sim::UndecodedInsn insn);
+isa::InsnMnemonic Decode(isa::UndecodedInsn insn);
 
 }
 
