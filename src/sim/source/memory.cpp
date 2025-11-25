@@ -17,7 +17,7 @@ bool IsAddrInSegment(isa::Address addr, const MemorySegm& segm);
 
 } // namespace
 
-uint32_t Memory::ReadU32(isa::Address addr) {
+uint32_t Memory::LoadU32(isa::Address addr) {
     spdlog::trace("Memory u32 read: addr {}", addr);
 
     for (const auto& segm: memory_) {
@@ -35,7 +35,7 @@ uint32_t Memory::ReadU32(isa::Address addr) {
     return 0;
 }
 
-uint16_t Memory::ReadU16(isa::Address addr) {
+uint16_t Memory::LoadU16(isa::Address addr) {
     for (const auto& segm: memory_) {
         if (!IsAddrInSegment(addr, segm)) { continue; }
 
@@ -51,7 +51,7 @@ uint16_t Memory::ReadU16(isa::Address addr) {
     return 0;
 }
 
-uint8_t Memory::ReadU8(isa::Address addr) {
+uint8_t Memory::LoadU8(isa::Address addr) {
     for (const auto& segm: memory_) {
         if (!IsAddrInSegment(addr, segm)) { continue; }
 
@@ -107,6 +107,18 @@ void Memory::StoreU8(isa::Address addr, uint8_t val) {
     }
        
     assert(!"no segment matched address");
+}
+
+void Memory::CopyGuestToHost(isa::Address from_addr, isa::MemByte* to_buf, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        to_buf[i] = LoadU8(from_addr + i);
+    }
+}
+
+void Memory::CopyHostToGuest(isa::Address to_addr, const isa::MemByte* from_buf, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        StoreU8(to_addr + i, from_buf[i]);
+    }
 }
 
 namespace {

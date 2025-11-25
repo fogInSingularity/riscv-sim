@@ -2,6 +2,7 @@
 #define MEMORY_HPP_
 
 #include <cstdint>
+#include <cstddef>
 #include <vector>
 #include <utility>
 
@@ -18,16 +19,19 @@ class Memory {
         : memory_{std::move(memory)} {}
     
     isa::UndecodedInsn Fetch(isa::Address addr) {
-        return ReadU32(addr);      
+        return LoadU32(addr);      
     }
     
-    uint32_t ReadU32(isa::Address addr);
-    uint16_t ReadU16(isa::Address addr);
-    uint8_t ReadU8(isa::Address addr);
+    uint32_t LoadU32(isa::Address addr);
+    uint16_t LoadU16(isa::Address addr);
+    uint8_t LoadU8(isa::Address addr);
 
     void StoreU32(isa::Address addr, uint32_t val);
     void StoreU16(isa::Address addr, uint16_t val);
     void StoreU8(isa::Address addr, uint8_t val);
+
+    void CopyGuestToHost(isa::Address from_addr, isa::MemByte* to_buf, size_t size); // write syscall
+    void CopyHostToGuest(isa::Address to_addr, const isa::MemByte* from_buf, size_t size); // read syscall
 };
 
 } // namespace sim

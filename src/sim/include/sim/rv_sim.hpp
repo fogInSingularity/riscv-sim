@@ -51,6 +51,10 @@ class RVSim {
 
         xregs[index] = value;
     }
+
+    void SetXReg(isa::XRegAlias reg_alias, isa::Register value) {
+        return SetXReg(hlp::FromEnum(reg_alias), value);
+    }
     
     isa::Register GetXReg(size_t index) {
         assert(index < isa::kNumXRegisters);
@@ -58,6 +62,10 @@ class RVSim {
         if (index == hlp::FromEnum(isa::XRegAlias::zero)) { return 0; }
 
         return xregs[index];
+    }
+
+    isa::Register GetXReg(isa::XRegAlias reg_alias) {
+        return GetXReg(hlp::FromEnum(reg_alias));
     }
 
     void SetFReg(size_t index, isa::Register value) {

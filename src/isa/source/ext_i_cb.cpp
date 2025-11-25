@@ -268,7 +268,7 @@ void CallbackLB(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
     RvInsn insn{raw_insn};
 
     auto addr = sim->GetXReg(insn.Rs1()) + insn.ImmI();
-    auto mem_val = sim->Mem().ReadU8(addr);
+    auto mem_val = sim->Mem().LoadU8(addr);
 
     sim->SetXReg(
         insn.Rd(),
@@ -285,7 +285,7 @@ void CallbackLH(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
     RvInsn insn{raw_insn};
 
     auto addr = sim->GetXReg(insn.Rs1()) + insn.ImmI();
-    auto mem_val = sim->Mem().ReadU16(addr);
+    auto mem_val = sim->Mem().LoadU16(addr);
 
     sim->SetXReg(
         insn.Rd(),
@@ -302,7 +302,7 @@ void CallbackLW(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
     RvInsn insn{raw_insn};
 
     auto addr = sim->GetXReg(insn.Rs1()) + insn.ImmI();
-    auto mem_val = sim->Mem().ReadU32(addr);
+    auto mem_val = sim->Mem().LoadU32(addr);
 
     sim->SetXReg(
         insn.Rd(),
@@ -319,7 +319,7 @@ void CallbackLBU(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) 
     RvInsn insn{raw_insn};
 
     auto addr = sim->GetXReg(insn.Rs1()) + insn.ImmI();
-    auto mem_val = sim->Mem().ReadU8(addr);
+    auto mem_val = sim->Mem().LoadU8(addr);
 
     sim->SetXReg(
         insn.Rd(),
@@ -336,7 +336,7 @@ void CallbackLHU(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) 
     RvInsn insn{raw_insn};
 
     auto addr = sim->GetXReg(insn.Rs1()) + insn.ImmI();
-    auto mem_val = sim->Mem().ReadU16(addr);
+    auto mem_val = sim->Mem().LoadU16(addr);
 
     sim->SetXReg(
         insn.Rd(),
