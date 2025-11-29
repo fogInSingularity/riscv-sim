@@ -95,6 +95,16 @@ class RVSim {
         return fregs[index];
     }
 
+    void SetCSR(size_t index, isa::Register value) {
+        spdlog::debug("set csr called: index {}, value {}", index, value);
+    }
+
+    isa::Register GetCSR(size_t index) {
+        spdlog::debug("set csr called: index {}", index);
+
+        return 0;
+    }
+
     auto& Ip() {
         return ip_;
     }
