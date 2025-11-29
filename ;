@@ -17,8 +17,7 @@ using Address = uint32_t;
 using UndecodedInsn = uint32_t;
 using InsnField = uint32_t;
 
-constexpr size_t kXlenByte = sizeof(Register);
-constexpr size_t kXlen = kXlenByte * CHAR_BIT;
+constexpr size_t kXlen = sizeof(Register) * CHAR_BIT
 constexpr size_t kStepSize = sizeof(UndecodedInsn);
 
 constexpr size_t kNumXRegisters = 32;

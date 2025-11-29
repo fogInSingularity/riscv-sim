@@ -8,9 +8,7 @@
 
 #include "helpers/traceable_exception.hpp"
 #include "sim/elf_loader.hpp"
-#include "sim/memory_segm.hpp"
 #include "sim/rv_sim.hpp"
-#include "isa/isa_defs.hpp"
 
 int main(int argc, const char* argv[]) {
     auto logger = spdlog::basic_logger_mt("sim", "sim.log", true);

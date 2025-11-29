@@ -12,8 +12,7 @@ namespace {
 
 std::array<InsnCallback, static_cast<size_t>(isa::InsnMnemonic::kCount)> callback_table {
 #define MNEMONIC(name, mask, match) isa::Callback##name,
-#include "isa/ext_i.inc"
-#include "isa/ext_m.inc"
+#include "isa/isa_ext.inc"
 #undef MNEMONIC
 };
 

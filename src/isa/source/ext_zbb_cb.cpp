@@ -1,0 +1,327 @@
+#include "isa/ext_zbb_cb.hpp"
+
+#include <cstddef>
+#include <cassert>
+#include <cstdint>
+#include <limits>
+
+#include "helpers/trace_calls.hpp"
+#include "sim/rv_sim.hpp"
+#include "isa/isa_defs.hpp"
+#include "isa/rv_insn.hpp"
+#include "isa/isa_hlp.hpp"
+
+namespace isa {
+
+void CallbackANDN(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto res = sim->GetXReg(insn.Rs1()) & ~sim->GetXReg(insn.Rs2());
+
+    sim->SetXReg(insn.Rd(), res);
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackORN(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto res = sim->GetXReg(insn.Rs1()) | ~sim->GetXReg(insn.Rs2());
+
+    sim->SetXReg(insn.Rd(), res);
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackXNOR(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto res = ~(sim->GetXReg(insn.Rs1()) ^ sim->GetXReg(insn.Rs2()));
+
+    sim->SetXReg(insn.Rd(), res);
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackMIN(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto rs1 = sim->GetXReg(insn.Rs1());
+    auto rs2 = sim->GetXReg(insn.Rs2());
+
+    auto res = RegToIReg(rs1) < RegToIReg(rs2) ? rs1 : rs2;
+    sim->SetXReg(insn.Rd(), res);
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackMINU(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto rs1 = sim->GetXReg(insn.Rs1());
+    auto rs2 = sim->GetXReg(insn.Rs2());
+
+    auto res = rs1 < rs2 ? rs1 : rs2;
+    sim->SetXReg(insn.Rd(), res);
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackMAX(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto rs1 = sim->GetXReg(insn.Rs1());
+    auto rs2 = sim->GetXReg(insn.Rs2());
+
+    auto res = RegToIReg(rs1) < RegToIReg(rs2) ? rs2 : rs1;
+    sim->SetXReg(insn.Rd(), res);
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackMAXU(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto rs1 = sim->GetXReg(insn.Rs1());
+    auto rs2 = sim->GetXReg(insn.Rs2());
+
+    auto res = rs1 < rs2 ? rs2 : rs1;
+    sim->SetXReg(insn.Rd(), res);
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackSEXT_B(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto rs = sim->GetXReg(insn.Rs1());
+
+    auto res = SignExt<Register>(TruncHigh<uint8_t>(rs));
+    sim->SetXReg(insn.Rd(), res);
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackSEXT_H(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto rs = sim->GetXReg(insn.Rs1());
+
+    auto res = SignExt<Register>(TruncHigh<uint16_t>(rs));
+    sim->SetXReg(insn.Rd(), res);
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackZEXT_H(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto rs = sim->GetXReg(insn.Rs1());
+
+    auto res = TruncHigh<uint16_t>(rs);
+    sim->SetXReg(insn.Rd(), res);
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackCLZ(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+    
+    RvInsn insn{raw_insn};
+
+    auto rs = sim->GetXReg(insn.Rs1());
+
+    int64_t highest_set = -1;
+
+    for (int64_t i = kXlen - 1; i >= 0; i--) {
+        if (IsBitSet(rs, i)) {
+            highest_set = i;
+            break;
+        }
+    }
+
+    sim->SetXReg(
+        insn.Rd(),
+        (kXlen - 1) - highest_set
+    );
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackCTZ(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto rs = sim->GetXReg(insn.Rs1());
+
+    size_t lowest_set = kXlen;
+
+    for (size_t i = 0; i <= kXlen - 1; i++) {
+        if (IsBitSet(rs, i)) {
+            lowest_set = i;
+            break;
+        }
+    }
+
+    sim->SetXReg(
+        insn.Rd(),
+        lowest_set
+    );
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackCPOP(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto rs = sim->GetXReg(insn.Rs1());
+
+    size_t bcount = 0;
+
+    for (size_t i = 0; i <= kXlen - 1; i++) {
+        if (IsBitSet(rs, i)) {
+            bcount++;
+        }
+    }
+
+    sim->SetXReg(
+        insn.Rd(),
+        bcount
+    );
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackROL(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto shamt = sim->GetXReg(insn.Rs2()) & 0xf;
+    auto rs1 = sim->GetXReg(insn.Rs1());
+
+    sim->SetXReg(
+        insn.Rd(),
+        (rs1 << shamt) | (rs1 >> (kXlen - shamt))
+    );
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackROR(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto shamt = sim->GetXReg(insn.Rs2()) & 0xf;
+    auto rs1 = sim->GetXReg(insn.Rs1());
+
+    sim->SetXReg(
+        insn.Rd(),
+        (rs1 >> shamt) | (rs1 << (kXlen - shamt))
+    );
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackRORI(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+
+    auto shamt = insn.Shamt();
+    auto rs1 = sim->GetXReg(insn.Rs1());
+
+    sim->SetXReg(
+        insn.Rd(),
+        (rs1 >> shamt) | (rs1 << (kXlen - shamt))
+    );
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackREV8(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+    auto rs = sim->GetXReg(insn.Rs1());
+    Register val = 0;
+
+    int64_t j = kXlenByte - 1;
+    for (size_t i = 0; i < kXlenByte; i++, j--) {
+        val = SetByte(val, GetByte(rs, j), i);
+    }
+
+    sim->SetXReg(
+        insn.Rd(),
+        val
+    );
+
+    sim->Ip() += kStepSize;
+}
+
+void CallbackORC_B(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+    assert(sim != nullptr);
+    hlp::trace_call();
+
+    RvInsn insn{raw_insn};
+    auto rs = sim->GetXReg(insn.Rs1());
+    Register val = 0;
+
+    for (size_t i = 0; i < kXlenByte; i++) {
+        if (GetByte(rs, i) == 0) {
+            val = SetByte(val, uint8_t{0}, i);
+        } else {
+            val = SetByte(val, ~uint8_t{0}, i);
+        }
+    }
+
+    sim->SetXReg(
+        insn.Rd(),
+        val
+    );
+
+    sim->Ip() += kStepSize;
+}
+
+} // namespace isa

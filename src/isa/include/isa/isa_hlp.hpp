@@ -3,8 +3,11 @@
 
 #include <climits>
 #include <bit>
+#include <cstdint>
 #include <limits>
 #include <type_traits>
+#include <cassert>
+#include <cstddef>
 
 #include "isa/isa_defs.hpp"
 
@@ -26,7 +29,15 @@ inline WRegister WIRegToWReg(WIRegister val) {
     return std::bit_cast<WRegister>(val);
 }
 
-// FIXME
+template <typename T>
+constexpr bool IsBitSet(T val, size_t index) {
+    static_assert(std::is_unsigned_v<T>, "T must be an unsigned type");
+    assert(index < sizeof(T) * CHAR_BIT);
+    
+    T one_hot = T{1} << index;
+    return (val & one_hot) == one_hot;
+}
+
 template <typename ToT, typename FromT>
 constexpr ToT TruncHigh(FromT x) {
     static_assert(std::is_integral_v<FromT>, "FromT must be an integral type");
@@ -74,6 +85,25 @@ constexpr ToT TruncLow(FromT x) {
     const UnsignedTo uy = static_cast<UnsignedTo>(shifted & mask);
 
     return static_cast<ToT>(uy);
+}
+
+template <typename T>
+constexpr uint8_t GetByte(T val, size_t index) {
+    static_assert(std::is_unsigned_v<T>, "T must be an unsigned type");
+    assert(index < sizeof(T));
+       
+    auto shift = index * CHAR_BIT;
+    return TruncHigh<uint8_t>(val >> shift);
+}
+
+template <typename T>
+constexpr T SetByte(T val, uint8_t byte_val, size_t index) {
+    static_assert(std::is_unsigned_v<T>, "T must be an unsigned type");
+    assert(index < sizeof(T));
+    
+    auto byte_mask = byte_val << (index * CHAR_BIT);
+
+    return val | byte_mask;
 }
 
 template <typename ToT, typename FromT>
