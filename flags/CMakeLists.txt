@@ -38,7 +38,7 @@ target_compile_options(sim-flags
             -g
             -O2
             -march=native
-            -flto
+            # -flto
             -DNDEBUG
         >
 )
@@ -64,7 +64,7 @@ target_link_options(sim-flags
             -g
             -O2
             -march=native
-            -flto
+            # -flto
         >
 )
 
