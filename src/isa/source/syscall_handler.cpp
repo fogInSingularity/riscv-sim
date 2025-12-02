@@ -40,7 +40,7 @@ void SyscallHandler(sim::RVSim* sim) {
             std::vector<MemByte> buf(size);
             auto rc = read(fd, buf.data(), size);
             if (rc >= 0) {
-                sim->Mem().CopyHostToGuest(guest_buf_ptr, buf.data(), size);
+                sim->Mem().CopyHostToGuest(guest_buf_ptr, buf.data(), rc);
             } else {
                 spdlog::error("read syscall failed: fd {}, error {}", fd, strerror(errno));
             }

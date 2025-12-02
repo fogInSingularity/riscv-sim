@@ -8,18 +8,18 @@
 #include "helpers/trace_calls.hpp"
 #include "sim/rv_sim.hpp"
 #include "isa/isa_defs.hpp"
-#include "isa/rv_insn.hpp"
+#include "isa/rv_csr_insn.hpp"
 #include "isa/isa_hlp.hpp"
 
 namespace isa {
 
-void CallbackCSRRW(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackCSRRW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
-    RvInsn insn{raw_insn};
+    RvCSRInsn insn{raw_insn};
 
-    auto csr_idx = insn.ImmI();
+    auto csr_idx = insn.ImmCSR();
     auto tmp = sim->GetCSR(csr_idx);
     sim->SetCSR(
         csr_idx, 
@@ -31,13 +31,13 @@ void CallbackCSRRW(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn
     sim->Ip() += kStepSize;
 }
 
-void CallbackCSRRS(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackCSRRS(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
-    RvInsn insn{raw_insn};
+    RvCSRInsn insn{raw_insn};
 
-    auto csr_idx = insn.ImmI();
+    auto csr_idx = insn.ImmCSR();
     auto tmp = sim->GetCSR(csr_idx);
     sim->SetCSR(
         csr_idx, 
@@ -49,13 +49,13 @@ void CallbackCSRRS(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn
     sim->Ip() += kStepSize;
 }
 
-void CallbackCSRRC(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackCSRRC(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
-    RvInsn insn{raw_insn};
+    RvCSRInsn insn{raw_insn};
 
-    auto csr_idx = insn.ImmI();
+    auto csr_idx = insn.ImmCSR();
     auto tmp = sim->GetCSR(csr_idx);
     sim->SetCSR(
         csr_idx, 
@@ -68,13 +68,13 @@ void CallbackCSRRC(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn
 }
 
 // uimm encoded the same as rs1
-void CallbackCSRRWI(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackCSRRWI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
-    RvInsn insn{raw_insn};
+    RvCSRInsn insn{raw_insn};
 
-    auto csr_idx = insn.ImmI();
+    auto csr_idx = insn.ImmCSR();
     auto tmp = sim->GetCSR(csr_idx);
     auto uimm = insn.Rs1();    
     sim->SetCSR(
@@ -87,13 +87,13 @@ void CallbackCSRRWI(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_ins
     sim->Ip() += kStepSize;
 }
 
-void CallbackCSRRSI(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackCSRRSI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
-    RvInsn insn{raw_insn};
+    RvCSRInsn insn{raw_insn};
 
-    auto csr_idx = insn.ImmI();
+    auto csr_idx = insn.ImmCSR();
     auto tmp = sim->GetCSR(csr_idx);
     auto uimm = insn.Rs1();
     sim->SetCSR(
@@ -106,13 +106,13 @@ void CallbackCSRRSI(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_ins
     sim->Ip() += kStepSize;
 }
 
-void CallbackCSRRCI(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackCSRRCI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
-    RvInsn insn{raw_insn};
+    RvCSRInsn insn{raw_insn};
 
-    auto csr_idx = insn.ImmI();
+    auto csr_idx = insn.ImmCSR();
     auto tmp = sim->GetCSR(csr_idx);
     auto uimm = insn.Rs1();
     sim->SetCSR(

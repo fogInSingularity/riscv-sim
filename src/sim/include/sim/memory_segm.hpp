@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <memory>
+#include <vector>
 
 #include "isa/isa_defs.hpp"
 
@@ -12,7 +13,7 @@ namespace sim {
 struct MemorySegm {
     isa::Address start_addr;
     isa::Address end_addr;
-    std::unique_ptr<isa::MemByte[]> data;
+    std::vector<isa::MemByte> data;
 
     // permissions
     bool r_permission;

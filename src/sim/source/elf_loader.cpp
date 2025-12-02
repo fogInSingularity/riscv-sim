@@ -57,15 +57,15 @@ ParsedElf LoadElf(const std::string& elf_path) {
         MemorySegm mem_segm = {
             .start_addr = start_addr,
             .end_addr = start_addr + mem_size,
-            .data = std::make_unique<isa::MemByte[]>(mem_size),
+            .data = decltype(MemorySegm::data)(mem_size),
 
             .r_permission = (perms & ELFIO::PF_R) == ELFIO::PF_R,
             .w_permission = (perms & ELFIO::PF_W) == ELFIO::PF_W,
             .x_permission = (perms & ELFIO::PF_X) == ELFIO::PF_X,
         };
 
-        std::copy(segm_data, segm_data + file_size, mem_segm.data.get());
-        std::fill(mem_segm.data.get() + file_size, mem_segm.data.get() + mem_size, 0);
+        std::copy(segm_data, segm_data + file_size, mem_segm.data.data());
+        std::fill(mem_segm.data.data() + file_size, mem_segm.data.data() + mem_size, 0);
 
         memory_segms.push_back(std::move(mem_segm));
     }

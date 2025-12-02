@@ -112,7 +112,7 @@ enum class RoundingMode {
     RNE = 0b000, // round to nearest, tie to even
     RTZ = 0b001, // roung to zero
     RDN = 0b010, // round to -inf
-    RUP = 0x011, // round to +inf
+    RUP = 0b011, // round to +inf
     RMM = 0b100, // round to nearest, max abs
     DYN = 0b111, // dynamic from frm
 };

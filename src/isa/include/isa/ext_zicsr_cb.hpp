@@ -6,7 +6,7 @@
 
 namespace isa {
 
-#define MNEMONIC(name, mask, match) void Callback##name(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn);
+#define MNEMONIC(name, mask, match) void Callback##name(sim::RVSim* sim, isa::UndecodedInsn raw_insn);
 #include "isa/ext_zicsr.inc"
 #undef MNEMONIC
 

@@ -34,8 +34,10 @@ auto SoftFloatSetRM(isa::RoundingMode rm) {
             return softfloat_roundingMode = softfloat_round_near_maxMag;
         case DYN:
             assert(!"what?");
-            return decltype(softfloat_roundingMode){0};
+            break;
     }
+
+    return decltype(softfloat_roundingMode){0};
 }
 
 void SoftFloatClearFExcp() {
@@ -55,6 +57,7 @@ void SoftFloatSetFExcp(sim::RVSim* sim) {
     sim->SetCSR(isa::CSR::fflags, sim_flags | excp_flags);
 }
 
+// FIXME nan correctness    
 inline float32_t f32_min(float32_t a, float32_t b) {
     return f32_le(a, b) ? a : b;
 }
@@ -64,12 +67,13 @@ inline float32_t f32_max(float32_t a, float32_t b) {
 }
 
 inline float32_t f32_neg(float32_t val) {
-    auto neg1 = i32_to_f32(-1);
-    return f32_mul(neg1, val);
+    auto sign_bit = decltype(val.v){1} << (sizeof(val.v) * CHAR_BIT - 1);
+    val.v = ((val.v ^ sign_bit) & sign_bit) | (val.v & ~sign_bit);
+    return val;
 }
 
 template <typename FBinOp>
-void ExecuteRRRFBinOp(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn, FBinOp fbin_op) {
+void ExecuteRRRFBinOp(sim::RVSim* sim, isa::UndecodedInsn raw_insn, FBinOp fbin_op) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -88,9 +92,8 @@ void ExecuteRRRFBinOp(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_i
     sim->Ip() += kStepSize;
 }
 
-// FIXME check rounging amount for fma in docs
 template <typename FTernOp>
-void ExecuteRRRRFTernOp(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn, FTernOp ftern_op) {
+void ExecuteRRRRFTernOp(sim::RVSim* sim, isa::UndecodedInsn raw_insn, FTernOp ftern_op) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -111,7 +114,7 @@ void ExecuteRRRRFTernOp(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw
 }
 
 template <typename FCmpOp>
-void ExecuteRRRCmpOp(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn, FCmpOp fcmp_op) {
+void ExecuteRRRCmpOp(sim::RVSim* sim, isa::UndecodedInsn raw_insn, FCmpOp fcmp_op) {
     assert(sim != nullptr);
     hlp::trace_call();
     
@@ -131,7 +134,7 @@ void ExecuteRRRCmpOp(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_in
 
 } // namespace
 
-void CallbackFLW(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFLW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -146,13 +149,13 @@ void CallbackFLW(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) 
     sim->Ip() += kStepSize;
 }
 
-void CallbackFSW(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFSW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
     RvFInsn insn{raw_insn};
 
-    auto addr = sim->GetXReg(insn.Rs1()) + insn.ImmI();
+    auto addr = sim->GetXReg(insn.Rs1()) + insn.ImmS();
     auto mem_val = FRegToReg(sim->GetFReg(insn.Rs2()));
 
     sim->Mem().StoreU32(addr, mem_val);
@@ -160,7 +163,7 @@ void CallbackFSW(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) 
     sim->Ip() += kStepSize;
 }
 
-void CallbackFADD_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFADD_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -171,7 +174,7 @@ void CallbackFADD_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_ins
     );
 }
 
-void CallbackFSUB_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFSUB_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -182,7 +185,7 @@ void CallbackFSUB_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_ins
     );
 }
 
-void CallbackFMUL_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFMUL_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -193,7 +196,7 @@ void CallbackFMUL_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_ins
     );
 }
 
-void CallbackFDIV_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFDIV_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -204,7 +207,7 @@ void CallbackFDIV_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_ins
     );
 }
 
-void CallbackFSQRT_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFSQRT_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -222,7 +225,7 @@ void CallbackFSQRT_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_in
     sim->Ip() += kStepSize;
 }
 
-void CallbackFMADD_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFMADD_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -230,12 +233,12 @@ void CallbackFMADD_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_in
         sim, 
         raw_insn, 
         [](isa::FRegister rs1, isa::FRegister rs2, isa::FRegister rs3) { 
-            return f32_add(f32_mul(rs1, rs2), rs3); 
+            return f32_mulAdd(rs1, rs2, rs3);
         }
     );
 }
 
-void CallbackFMSUB_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFMSUB_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -243,12 +246,12 @@ void CallbackFMSUB_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_in
         sim, 
         raw_insn, 
         [](isa::FRegister rs1, isa::FRegister rs2, isa::FRegister rs3) { 
-            return f32_sub(f32_mul(rs1, rs2), rs3); 
+            return f32_mulAdd(rs1, rs2, f32_neg(rs3));
         }
     );
 }
 
-void CallbackFNMSUB_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFNMSUB_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -256,15 +259,12 @@ void CallbackFNMSUB_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_i
         sim, 
         raw_insn, 
         [](isa::FRegister rs1, isa::FRegister rs2, isa::FRegister rs3) { 
-            return f32_add(
-                f32_neg(f32_mul(rs1, rs2)), 
-                rs3
-            ); 
+            return f32_mulAdd(f32_neg(rs1), rs2, rs3);
         }
     );
 }
 
-void CallbackFNMADD_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFNMADD_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -272,15 +272,12 @@ void CallbackFNMADD_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_i
         sim, 
         raw_insn, 
         [](isa::FRegister rs1, isa::FRegister rs2, isa::FRegister rs3) { 
-            return f32_sub(
-                f32_neg(f32_mul(rs1, rs2)), 
-                rs3
-            ); 
+            return f32_neg(f32_mulAdd(rs1, rs2, rs3));
         }
     );
 }
 
-void CallbackFSGNJ_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFSGNJ_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
     
@@ -298,7 +295,7 @@ void CallbackFSGNJ_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_in
     sim->Ip() += kStepSize;
 }
 
-void CallbackFSGNJN_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFSGNJN_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -309,14 +306,14 @@ void CallbackFSGNJN_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_i
 
     isa::FRegister res{};
     isa::Register high_bit = isa::Register{1} << (sizeof(isa::Register) * CHAR_BIT - 1);
-    res.v = ~(rs2.v & high_bit) | (rs1.v & ~high_bit);
+    res.v = ((rs2.v ^ high_bit) & high_bit) | (rs1.v & ~high_bit);
     
     sim->SetFReg(insn.Rd(), res);
 
     sim->Ip() += kStepSize;
 }
 
-void CallbackFSGNJX_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFSGNJX_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -334,7 +331,7 @@ void CallbackFSGNJX_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_i
     sim->Ip() += kStepSize;
 }
 
-void CallbackFMIN_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFMIN_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -349,7 +346,7 @@ void CallbackFMIN_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_ins
     sim->Ip() += kStepSize;
 }
 
-void CallbackFMAX_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFMAX_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -364,7 +361,7 @@ void CallbackFMAX_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_ins
     sim->Ip() += kStepSize;
 }
 
-void CallbackFLE_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFLE_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -375,7 +372,7 @@ void CallbackFLE_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn
     );
 }
 
-void CallbackFLT_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFLT_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -386,7 +383,7 @@ void CallbackFLT_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn
     );
 }
 
-void CallbackFEQ_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFEQ_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -397,7 +394,7 @@ void CallbackFEQ_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn
     );
 }
 
-void CallbackFCVT_W_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFCVT_W_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -419,7 +416,7 @@ void CallbackFCVT_W_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_i
     sim->Ip() += kStepSize;
 }
 
-void CallbackFCVT_WU_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFCVT_WU_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -441,7 +438,7 @@ void CallbackFCVT_WU_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_
     sim->Ip() += kStepSize;
 }
 
-void CallbackFCVT_S_W(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFCVT_S_W(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -457,7 +454,7 @@ void CallbackFCVT_S_W(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_i
     sim->Ip() += kStepSize;
 }
 
-void CallbackFCVT_S_WU(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFCVT_S_WU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -474,7 +471,7 @@ void CallbackFCVT_S_WU(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_
     sim->Ip() += kStepSize;
 }
 
-void CallbackFMV_X_W(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFMV_X_W(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -486,7 +483,7 @@ void CallbackFMV_X_W(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_in
     sim->Ip() += kStepSize;
 }
 
-void CallbackFMV_W_X(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFMV_W_X(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 
@@ -498,7 +495,7 @@ void CallbackFMV_W_X(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_in
     sim->Ip() += kStepSize;
 }
 
-void CallbackFCLASS_S(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
+void CallbackFCLASS_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     assert(sim != nullptr);
     hlp::trace_call();
 

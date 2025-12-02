@@ -11,6 +11,8 @@
 
 namespace sim {
 
+// FIXME check perms
+// FIXME check for alignment
 class Memory {
   private:
     std::vector<MemorySegm> memory_;

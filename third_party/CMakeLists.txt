@@ -27,7 +27,7 @@ ExternalProject_Add(
         CONFIGURE_COMMAND ""
         BUILD_IN_SOURCE ON
 
-        BUILD_COMMAND    ${CMAKE_MAKE_PROGRAM} -C <SOURCE_DIR>/build/Linux-x86_64-GCC
+        BUILD_COMMAND    ${CMAKE_MAKE_PROGRAM} -C <SOURCE_DIR>/build/Linux-x86_64-GCC -j4
 
         INSTALL_COMMAND  ""
         UPDATE_COMMAND   ""

@@ -31,7 +31,7 @@ class RVSim {
     isa::Register fcsr_; // float csr
   public:
     explicit RVSim(ParsedElf* parsed_elf)
-        : memory_{std::move(parsed_elf->mem)}, 
+        : memory_{parsed_elf->mem}, 
         ip_{parsed_elf->entry_point}, 
         should_stop_{false},
         xregs_{0},
@@ -43,7 +43,7 @@ class RVSim {
             MemorySegm{
                 isa::kStackBase, 
                 isa::kStackTop, 
-                std::make_unique<isa::MemByte[]>(isa::kStackSize),
+                decltype(MemorySegm::data)(isa::kStackSize),
                 true,
                 true,
                 false
@@ -125,7 +125,7 @@ class RVSim {
     }
 
     isa::Register GetCSR(size_t index) {
-        spdlog::debug("set csr called: index {}", index);
+        spdlog::debug("get csr called: index {}", index);
         
         switch (hlp::ToEnum<isa::CSR>(index)) {
             case isa::CSR::fflags:

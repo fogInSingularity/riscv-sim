@@ -11,7 +11,7 @@
 namespace isa {
 
 class RvInsn {
-  private:
+  protected:
     isa::UndecodedInsn raw_insn_;
 
     static constexpr int32_t SignExtend(uint32_t value, unsigned bits) {

@@ -17,7 +17,9 @@ struct InsnEntry {
     InsnMatch match;
 };
 
-constexpr std::array<InsnEntry, static_cast<size_t>(isa::InsnMnemonic::kCount)> InsnDecodeTable {{
+using DecodeTable = std::array<InsnEntry, static_cast<size_t>(isa::InsnMnemonic::kCount)>;
+
+constexpr DecodeTable InsnDecodeTable {{
 #define MNEMONIC(name, mask, match) {isa::InsnMnemonic::name, mask, match},
 #include "isa/isa_ext.inc"
 #undef MNEMONIC

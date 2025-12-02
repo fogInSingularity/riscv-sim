@@ -26,7 +26,7 @@ uint32_t Memory::LoadU32(isa::Address addr) {
         isa::Address offset = addr - segm.start_addr;
 
         uint32_t data = 0;
-        std::memcpy(&data, segm.data.get() + offset, sizeof(data));
+        std::memcpy(&data, segm.data.data() + offset, sizeof(data));
 
         return data;
     }
@@ -42,7 +42,7 @@ uint16_t Memory::LoadU16(isa::Address addr) {
         isa::Address offset = addr - segm.start_addr;
 
         uint16_t data = 0;
-        std::memcpy(&data, segm.data.get() + offset, sizeof(data));
+        std::memcpy(&data, segm.data.data() + offset, sizeof(data));
 
         return data;
     }
@@ -58,7 +58,7 @@ uint8_t Memory::LoadU8(isa::Address addr) {
         isa::Address offset = addr - segm.start_addr;
 
         uint8_t data = 0;
-        std::memcpy(&data, segm.data.get() + offset, sizeof(data));
+        std::memcpy(&data, segm.data.data() + offset, sizeof(data));
 
         return data;
     }
@@ -68,12 +68,12 @@ uint8_t Memory::LoadU8(isa::Address addr) {
 }
 
 void Memory::StoreU32(isa::Address addr, uint32_t val) {
-    for (const auto& segm: memory_) {
+    for (auto& segm: memory_) {
         if (!IsAddrInSegment(addr, segm)) { continue; }
 
         isa::Address offset = addr - segm.start_addr;
 
-        std::memcpy(segm.data.get() + offset, &val, sizeof(val));
+        std::memcpy(segm.data.data() + offset, &val, sizeof(val));
 
         return ;
     }
@@ -82,12 +82,12 @@ void Memory::StoreU32(isa::Address addr, uint32_t val) {
 }
 
 void Memory::StoreU16(isa::Address addr, uint16_t val) {
-    for (const auto& segm: memory_) {
+    for (auto& segm: memory_) {
         if (!IsAddrInSegment(addr, segm)) { continue; }
 
         isa::Address offset = addr - segm.start_addr;
 
-        std::memcpy(segm.data.get() + offset, &val, sizeof(val));
+        std::memcpy(segm.data.data() + offset, &val, sizeof(val));
 
         return ;
     }
@@ -96,12 +96,12 @@ void Memory::StoreU16(isa::Address addr, uint16_t val) {
 }
 
 void Memory::StoreU8(isa::Address addr, uint8_t val) {
-    for (const auto& segm: memory_) {
+    for (auto& segm: memory_) {
         if (!IsAddrInSegment(addr, segm)) { continue; }
 
         isa::Address offset = addr - segm.start_addr;
 
-        std::memcpy(segm.data.get() + offset, &val, sizeof(val));
+        std::memcpy(segm.data.data() + offset, &val, sizeof(val));
 
         return ;
     }
@@ -123,8 +123,9 @@ void Memory::CopyHostToGuest(isa::Address to_addr, const isa::MemByte* from_buf,
 
 namespace {
 
+// memory segment [begin, end)
 bool IsAddrInSegment(isa::Address addr, const MemorySegm& segm) {
-    return ((segm.start_addr <= addr) && (addr <= segm.end_addr));
+    return ((segm.start_addr <= addr) && (addr < segm.end_addr));
 }
 
 } // namespace
