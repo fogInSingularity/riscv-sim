@@ -27,19 +27,19 @@ ExternalProject_Add(
         CONFIGURE_COMMAND ""
         BUILD_IN_SOURCE ON
 
-        BUILD_COMMAND    bear -- ${CMAKE_MAKE_PROGRAM} -C <SOURCE_DIR>/build/Linux-x86_64-GCC
+        BUILD_COMMAND    ${CMAKE_MAKE_PROGRAM} -C <SOURCE_DIR>/build/Linux-x86_64-GCC
 
         INSTALL_COMMAND  ""
         UPDATE_COMMAND   ""
 )
 ExternalProject_Get_Property(softfloat_ext SOURCE_DIR)
 
-add_library(softfloat STATIC IMPORTED GLOBAL)
-set_target_properties(softfloat 
+add_library(softfloat_lib STATIC IMPORTED GLOBAL)
+set_target_properties(softfloat_lib
     PROPERTIES
         IMPORTED_LOCATION "${SOURCE_DIR}/build/Linux-x86_64-GCC/softfloat.a"
 )
-add_dependencies(softfloat softfloat_ext)
+add_dependencies(softfloat_lib softfloat_ext)
 
 add_library(softfloat_headers INTERFACE)
 target_include_directories(softfloat_headers 
@@ -48,8 +48,10 @@ target_include_directories(softfloat_headers
         "${SOURCE_DIR}/source/include"
 )
 
+add_library(softfloat INTERFACE)
 target_link_libraries(softfloat 
     INTERFACE 
+        softfloat_lib
         softfloat_headers
 )
 
