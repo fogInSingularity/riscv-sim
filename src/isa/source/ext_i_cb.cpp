@@ -18,9 +18,7 @@ namespace {
 
 constexpr uint32_t ArithmRightShift(uint32_t x, unsigned shift) {
     constexpr unsigned num_bits = sizeof(x) * CHAR_BIT;
-    constexpr uint32_t one = uint32_t{1};
     constexpr unsigned sign_bit = num_bits - 1;
-    constexpr uint32_t sign_bit_mask = one << sign_bit;
     constexpr uint32_t all_ones = std::numeric_limits<uint32_t>::max();
     constexpr uint32_t zero = uint32_t{0};
 

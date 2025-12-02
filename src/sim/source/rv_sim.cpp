@@ -18,10 +18,10 @@ int RVSim::Execute() {
         // Trace();
 
         isa::UndecodedInsn undecoded_insn = memory_.Fetch(ip_);
-        spdlog::trace("undecoded insn: {:#04x}", undecoded_insn);
+        SPDLOG_TRACE("undecoded insn: {:#04x}", undecoded_insn);
 
         isa::InsnMnemonic mnem = Decode(undecoded_insn);
-        spdlog::trace("Mnemonic: {}", isa::MnemonicToStr(mnem));
+        SPDLOG_TRACE("Mnemonic: {}", isa::MnemonicToStr(mnem));
         if (mnem == isa::InsnMnemonic::kInvalid) {
             throw hlp::TraceableException{"Unkown instuction encountered"};
         }

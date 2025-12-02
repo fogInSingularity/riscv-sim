@@ -37,7 +37,7 @@ class RvInsn {
         constexpr uint32_t kRdShift = 7;
         constexpr uint32_t kRdMask  = 0x1Fu;
         auto rd = (raw_insn_ >> kRdShift) & kRdMask;
-        spdlog::trace("Rd(): rd = {}", rd);
+        SPDLOG_TRACE("Rd(): rd = {}", rd);
         return rd;
     }
 
@@ -51,7 +51,7 @@ class RvInsn {
         constexpr uint32_t kRs1Shift = 15;
         constexpr uint32_t kRs1Mask  = 0x1Fu;
         auto rs1 = (raw_insn_ >> kRs1Shift) & kRs1Mask;
-        spdlog::trace("Rs1(): rs1 = {}", rs1);
+        SPDLOG_TRACE("Rs1(): rs1 = {}", rs1);
         return rs1;
     }
 
@@ -78,7 +78,7 @@ class RvInsn {
         constexpr unsigned kImmBits  = 12;
         uint32_t imm = raw_insn_ >> kImmShift;
         auto sext = SignExtend(imm, kImmBits);
-        spdlog::trace("i immid: {}", sext);
+        SPDLOG_TRACE("i immid: {}", sext);
         return sext;
     }
 
@@ -139,7 +139,7 @@ class RvInsn {
         );
 
         auto sext = SignExtend(imm, kImmBits);
-        spdlog::trace("j immid: {}", sext);
+        SPDLOG_TRACE("j immid: {}", sext);
         return sext;
     }
 };} // namespace isa

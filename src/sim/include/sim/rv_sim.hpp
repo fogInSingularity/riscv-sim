@@ -63,7 +63,7 @@ class RVSim {
     void SetXReg(size_t index, isa::Register value) {
         assert(index < isa::kNumXRegisters);
         
-        spdlog::trace("set x reg: index {}, value {}", index, value);
+        SPDLOG_TRACE("set x reg: index {}, value {}", index, value);
 
         if (index == hlp::FromEnum(isa::XRegAlias::zero)) { return; }
 
@@ -88,7 +88,7 @@ class RVSim {
 
     void SetFReg(size_t index, isa::FRegister value) {
         assert(index < isa::kNumFRegisters);
-        spdlog::trace("set f reg: index {}, value {:#x}", index, value.v);
+        SPDLOG_TRACE("set f reg: index {}, value {:#x}", index, value.v);
 
         fregs_[index] = value;
     }
@@ -97,12 +97,12 @@ class RVSim {
         assert(index < isa::kNumFRegisters);
 
         auto fval = fregs_[index];
-        spdlog::trace("get f reg: index {}, value {:#x}", index, fval.v);
+        SPDLOG_TRACE("get f reg: index {}, value {:#x}", index, fval.v);
         return fval;
     }
 
     void SetCSR(size_t index, isa::Register value) {
-        spdlog::debug("set csr called: index {}, value {}", index, value);
+        SPDLOG_TRACE("set csr called: index {}, value {}", index, value);
 
         switch (hlp::ToEnum<isa::CSR>(index)) {
             case isa::CSR::fflags:
@@ -125,7 +125,7 @@ class RVSim {
     }
 
     isa::Register GetCSR(size_t index) {
-        spdlog::debug("get csr called: index {}", index);
+        SPDLOG_TRACE("get csr called: index {}", index);
         
         switch (hlp::ToEnum<isa::CSR>(index)) {
             case isa::CSR::fflags:
@@ -165,9 +165,9 @@ class RVSim {
     }
 
     void Trace() {
-        spdlog::trace("trace sim:");
+        SPDLOG_TRACE("trace sim:");
         for (size_t i = 0; i < isa::kNumXRegisters; i++) {
-            spdlog::trace("Reg {}: {}", i, xregs_[i]);
+            SPDLOG_TRACE("Reg {}: {}", i, xregs_[i]);
         }
     }
 };

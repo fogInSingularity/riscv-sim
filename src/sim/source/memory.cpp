@@ -18,7 +18,7 @@ bool IsAddrInSegment(isa::Address addr, const MemorySegm& segm);
 } // namespace
 
 uint32_t Memory::LoadU32(isa::Address addr) {
-    spdlog::trace("Memory u32 read: addr {}", addr);
+    SPDLOG_TRACE("Memory u32 read: addr {}", addr);
 
     for (const auto& segm: memory_) {
         if (!IsAddrInSegment(addr, segm)) { continue; }

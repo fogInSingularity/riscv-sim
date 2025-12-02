@@ -7,7 +7,7 @@
 
 namespace hlp {
 
-inline void trace_call(std::source_location loc = std::source_location::current()) {
+inline void trace_call([[maybe_unused]] std::source_location loc = std::source_location::current()) {
 #if !defined(NDEBUG)
     // spdlog::debug("Function call: {}, {}:{}", loc.function_name(), loc.file_name(), loc.line());
     spdlog::debug("Function call: {}", loc.function_name());

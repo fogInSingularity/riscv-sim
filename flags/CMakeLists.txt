@@ -68,3 +68,7 @@ target_link_options(sim-flags
         >
 )
 
+target_compile_definitions(sim-flags INTERFACE
+    $<$<CONFIG:Release>:SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_INFO>
+    $<$<CONFIG:Debug>:SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE>
+)

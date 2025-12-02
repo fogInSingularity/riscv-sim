@@ -25,6 +25,7 @@ constexpr DecodeTable InsnDecodeTable {{
 #undef MNEMONIC
 }};
 
+// FIXME fix decode
 isa::InsnMnemonic Decode(isa::UndecodedInsn insn) {
     for (auto& entry: InsnDecodeTable) {
         if ((insn & entry.mask) == entry.match) {
