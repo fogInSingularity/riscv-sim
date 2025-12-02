@@ -25,7 +25,7 @@ void CallbackMUL(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), mul_trunc_low);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackMULH(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -43,7 +43,7 @@ void CallbackMULH(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), mul_trunc_high);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackMULHSU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -67,7 +67,7 @@ void CallbackMULHSU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), mul_trunc_high);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackMULHU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -85,7 +85,7 @@ void CallbackMULHU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), mul_trunc_high);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackDIV(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -108,7 +108,7 @@ void CallbackDIV(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackDIVU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -129,7 +129,7 @@ void CallbackDIVU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackREM(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -152,7 +152,7 @@ void CallbackREM(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackREMU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -174,7 +174,7 @@ void CallbackREMU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 } // namespace isa

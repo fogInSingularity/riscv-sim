@@ -30,9 +30,9 @@ class RVSim {
     FRegArrayT fregs_;
     isa::Register fcsr_; // float csr
   public:
-    explicit RVSim(ParsedElf* parsed_elf)
-        : memory_{parsed_elf->mem}, 
-        ip_{parsed_elf->entry_point}, 
+    explicit RVSim(const ParsedElf parsed_elf)
+        : memory_{parsed_elf.mem}, 
+        ip_{parsed_elf.entry_point}, 
         should_stop_{false},
         xregs_{0},
         fregs_{0},
@@ -50,7 +50,7 @@ class RVSim {
             }  
         );
 
-        xregs_[hlp::FromEnum(isa::XRegAlias::gp)] = parsed_elf->global_ptr;
+        xregs_[hlp::FromEnum(isa::XRegAlias::gp)] = parsed_elf.global_ptr;
         xregs_[hlp::FromEnum(isa::XRegAlias::sp)] = isa::kStackTop - sizeof(isa::Register);
     }
 
@@ -154,6 +154,10 @@ class RVSim {
 
     auto& Ip() {
         return ip_;
+    }
+
+    void Step() {
+        ip_ += isa::kStepSize;
     }
 
     auto& Mem() {

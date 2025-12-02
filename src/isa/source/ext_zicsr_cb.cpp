@@ -28,7 +28,7 @@ void CallbackCSRRW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), tmp);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackCSRRS(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -46,7 +46,7 @@ void CallbackCSRRS(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), tmp);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackCSRRC(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -64,7 +64,7 @@ void CallbackCSRRC(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), tmp);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 // uimm encoded the same as rs1
@@ -84,7 +84,7 @@ void CallbackCSRRWI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), tmp);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackCSRRSI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -103,7 +103,7 @@ void CallbackCSRRSI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), tmp);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackCSRRCI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -122,7 +122,7 @@ void CallbackCSRRCI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), tmp);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 } // namespace isa

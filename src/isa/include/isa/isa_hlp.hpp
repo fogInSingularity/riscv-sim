@@ -110,10 +110,12 @@ template <typename T>
 constexpr T SetByte(T val, uint8_t byte_val, size_t index) {
     static_assert(std::is_unsigned_v<T>, "T must be an unsigned type");
     assert(index < sizeof(T));
-    
-    auto byte_mask = byte_val << (index * CHAR_BIT);
+ 
+    auto shift = index * CHAR_BIT;
+    auto clear_byte_mask = ~((~uint8_t{0}) << shift); // looks like 1..1'00000000'1..1
+    auto byte_mask = byte_val << shift;
 
-    return val | byte_mask;
+    return (val & clear_byte_mask) | byte_mask;
 }
 
 template <typename ToT, typename FromT>

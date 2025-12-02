@@ -27,7 +27,7 @@ constexpr uint32_t ArithmRightShift(uint32_t x, unsigned shift) {
     if (shift == 0) { return x; }
     
     if (shift >= num_bits) {
-        return !IsBitSet(x, sign_bit) ? all_ones : zero;
+        return IsBitSet(x, sign_bit) ? all_ones : zero;
     }
 
     uint32_t logical = x >> shift;
@@ -52,7 +52,7 @@ void ExecuteRRRBinOp(sim::RVSim* sim, isa::UndecodedInsn raw_insn, BinOpFunc bin
         )
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 template <typename BinOpFunc>
@@ -69,7 +69,7 @@ void ExecuteRRIBinOp(sim::RVSim* sim, isa::UndecodedInsn raw_insn, BinOpFunc bin
         )
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 template <typename BinOpFunc>
@@ -86,7 +86,7 @@ void ExecuteRRIShift(sim::RVSim* sim, isa::UndecodedInsn raw_insn, BinOpFunc bin
         )
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 template <typename BranchPredFunc>
@@ -104,7 +104,7 @@ void ExecuteBranch(sim::RVSim* sim, isa::UndecodedInsn raw_insn, BranchPredFunc 
     if (should_branch) {
         sim->Ip() += insn.ImmB();
     } else {
-        sim->Ip() += kStepSize;
+        sim->Step();
     }
 }
 
@@ -120,7 +120,7 @@ void CallbackLUI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         insn.ImmU()
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackAUIPC(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -133,7 +133,7 @@ void CallbackAUIPC(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         sim->Ip() + insn.ImmU()
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackJAL(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -216,7 +216,7 @@ void CallbackLB(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         SignExt<uint32_t>(mem_val)
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackLH(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -233,7 +233,7 @@ void CallbackLH(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         SignExt<uint32_t>(mem_val)
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackLW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -250,7 +250,7 @@ void CallbackLW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         mem_val
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackLBU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -267,7 +267,7 @@ void CallbackLBU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         mem_val
     );
     
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackLHU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -284,7 +284,7 @@ void CallbackLHU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         mem_val
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackSB(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -300,7 +300,7 @@ void CallbackSB(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->Mem().StoreU8(addr, val);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackSH(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -316,7 +316,7 @@ void CallbackSH(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->Mem().StoreU16(addr, val);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackSW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -330,7 +330,7 @@ void CallbackSW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->Mem().StoreU32(addr, val);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackADDI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -357,7 +357,7 @@ void CallbackSLTI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         is_less_then ? 1 : 0
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackSLTIU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -372,7 +372,7 @@ void CallbackSLTIU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         is_less_then ? 1 : 0
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackXORI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -457,7 +457,7 @@ void CallbackSLT(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         is_less_then ? 1 : 0
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackSLTU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -472,7 +472,7 @@ void CallbackSLTU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         is_less_then ? 1 : 0
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackXOR(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -520,7 +520,7 @@ void CallbackFENCE(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn
 
     spdlog::info("FENCE instruction encountered");
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFENCE_I(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
@@ -529,7 +529,7 @@ void CallbackFENCE_I(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_in
     
     spdlog::info("FENCE_I instruction encountered");
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackECALL(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
@@ -538,7 +538,7 @@ void CallbackECALL(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn
     
     SyscallHandler(sim);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackEBREAK(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_insn) {
@@ -547,7 +547,7 @@ void CallbackEBREAK(sim::RVSim* sim, [[maybe_unused]] isa::UndecodedInsn raw_ins
 
     spdlog::info("EBREAK instruction encountered");    
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 } // namespace isa

@@ -23,7 +23,7 @@ void CallbackANDN(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackORN(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -36,7 +36,7 @@ void CallbackORN(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackXNOR(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -49,7 +49,7 @@ void CallbackXNOR(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackMIN(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -64,7 +64,7 @@ void CallbackMIN(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     auto res = RegToIReg(rs1) < RegToIReg(rs2) ? rs1 : rs2;
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackMINU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -79,7 +79,7 @@ void CallbackMINU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     auto res = rs1 < rs2 ? rs1 : rs2;
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackMAX(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -94,7 +94,7 @@ void CallbackMAX(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     auto res = RegToIReg(rs1) < RegToIReg(rs2) ? rs2 : rs1;
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackMAXU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -109,7 +109,7 @@ void CallbackMAXU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     auto res = rs1 < rs2 ? rs2 : rs1;
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackSEXT_B(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -123,7 +123,7 @@ void CallbackSEXT_B(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     auto res = SignExt<Register>(TruncHigh<uint8_t>(rs));
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackSEXT_H(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -137,7 +137,7 @@ void CallbackSEXT_H(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     auto res = SignExt<Register>(TruncHigh<uint16_t>(rs));
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackZEXT_H(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -151,7 +151,7 @@ void CallbackZEXT_H(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     auto res = TruncHigh<uint16_t>(rs);
     sim->SetXReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackCLZ(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -176,7 +176,7 @@ void CallbackCLZ(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         (kXlen - 1) - highest_set
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackCTZ(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -201,7 +201,7 @@ void CallbackCTZ(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         lowest_set
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackCPOP(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -225,7 +225,7 @@ void CallbackCPOP(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         bcount
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackROL(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -242,7 +242,7 @@ void CallbackROL(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         (rs1 << shamt) | (rs1 >> (kXlen - shamt))
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackROR(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -259,7 +259,7 @@ void CallbackROR(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         (rs1 >> shamt) | (rs1 << (kXlen - shamt))
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackRORI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -276,7 +276,7 @@ void CallbackRORI(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         (rs1 >> shamt) | (rs1 << (kXlen - shamt))
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackREV8(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -297,7 +297,7 @@ void CallbackREV8(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         val
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackORC_B(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -321,7 +321,7 @@ void CallbackORC_B(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         val
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 } // namespace isa

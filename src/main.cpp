@@ -50,7 +50,7 @@ int main(int argc, const char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    sim::RVSim sim{&parsed_elf};
+    sim::RVSim sim{parsed_elf};
 
     return sim.Execute();
 }

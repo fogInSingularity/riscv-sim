@@ -89,7 +89,7 @@ void ExecuteRRRFBinOp(sim::RVSim* sim, isa::UndecodedInsn raw_insn, FBinOp fbin_
     sim->SetFReg(insn.Rd(), res);
     SoftFloatSetFExcp(sim);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 template <typename FTernOp>
@@ -110,7 +110,7 @@ void ExecuteRRRRFTernOp(sim::RVSim* sim, isa::UndecodedInsn raw_insn, FTernOp ft
     sim->SetFReg(insn.Rd(), res);
     SoftFloatSetFExcp(sim);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 template <typename FCmpOp>
@@ -129,7 +129,7 @@ void ExecuteRRRCmpOp(sim::RVSim* sim, isa::UndecodedInsn raw_insn, FCmpOp fcmp_o
     sim->SetXReg(insn.Rd(), cmp ? 1 : 0);
     SoftFloatSetFExcp(sim);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 } // namespace
@@ -146,7 +146,7 @@ void CallbackFLW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
         RegToFReg(sim->Mem().LoadU32(addr))
     );
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFSW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -160,7 +160,7 @@ void CallbackFSW(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->Mem().StoreU32(addr, mem_val);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFADD_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -222,7 +222,7 @@ void CallbackFSQRT_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     sim->SetFReg(insn.Rd(), res);
     SoftFloatSetFExcp(sim);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFMADD_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -292,7 +292,7 @@ void CallbackFSGNJ_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     
     sim->SetFReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFSGNJN_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -310,7 +310,7 @@ void CallbackFSGNJN_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     
     sim->SetFReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFSGNJX_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -328,7 +328,7 @@ void CallbackFSGNJX_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
  
     sim->SetFReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFMIN_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -343,7 +343,7 @@ void CallbackFMIN_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     );
     sim->SetFReg(insn.Rd(), res);
         
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFMAX_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -358,7 +358,7 @@ void CallbackFMAX_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     );
     sim->SetFReg(insn.Rd(), res);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFLE_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -413,7 +413,7 @@ void CallbackFCVT_W_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     sim->SetXReg(insn.Rd(), conv);
     SoftFloatSetFExcp(sim);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFCVT_WU_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -435,7 +435,7 @@ void CallbackFCVT_WU_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     sim->SetXReg(insn.Rd(), conv);
     SoftFloatSetFExcp(sim);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFCVT_S_W(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -451,7 +451,7 @@ void CallbackFCVT_S_W(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     sim->SetFReg(insn.Rd(), conv); 
     SoftFloatSetFExcp(sim);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFCVT_S_WU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -468,7 +468,7 @@ void CallbackFCVT_S_WU(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     SoftFloatSetFExcp(sim);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFMV_X_W(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -480,7 +480,7 @@ void CallbackFMV_X_W(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     auto frs1 = sim->GetFReg(insn.Rs1());
     sim->SetXReg(insn.Rd(), FRegToReg(frs1));
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFMV_W_X(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -492,7 +492,7 @@ void CallbackFMV_W_X(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
     auto rs1 = sim->GetXReg(insn.Rs1());
     sim->SetFReg(insn.Rd(), RegToFReg(rs1));
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 void CallbackFCLASS_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
@@ -534,7 +534,7 @@ void CallbackFCLASS_S(sim::RVSim* sim, isa::UndecodedInsn raw_insn) {
 
     sim->SetXReg(insn.Rd(), hot_bit);
 
-    sim->Ip() += kStepSize;
+    sim->Step();
 }
 
 } // namespace isa
