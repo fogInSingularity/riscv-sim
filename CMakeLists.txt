@@ -31,6 +31,7 @@ target_link_libraries(riscv-sim.x
         isa
 
         spdlog
+        softfloat
 )
 
 # enable_testing()

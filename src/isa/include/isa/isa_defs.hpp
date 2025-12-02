@@ -5,20 +5,27 @@
 #include <cstdint>
 #include <cstddef>
 
+#include "softfloat_wrap.hpp"
+
 namespace isa {
     
 using MemByte = uint8_t;
 using MemSize = uint32_t;
+
 using Register = uint32_t;
-using WRegister = uint64_t;
 using IRegister = int32_t;
+using WRegister = uint64_t;
 using WIRegister = int64_t;
+using FRegister = float32_t;
+
 using Address = uint32_t;
 using UndecodedInsn = uint32_t;
 using InsnField = uint32_t;
 
 constexpr size_t kXlenByte = sizeof(Register);
 constexpr size_t kXlen = kXlenByte * CHAR_BIT;
+constexpr size_t kFlenByte = sizeof(FRegister);
+constexpr size_t kFlen = kFlenByte * CHAR_BIT;
 constexpr size_t kStepSize = sizeof(UndecodedInsn);
 
 constexpr size_t kNumXRegisters = 32;
@@ -99,6 +106,21 @@ enum class FRegAlias : uint32_t {
     ft9 = 29,
     ft10 = 30,
     ft11 = 31,
+};
+
+enum class RoundingMode {
+    RNE = 0b000, // round to nearest, tie to even
+    RTZ = 0b001, // roung to zero
+    RDN = 0b010, // round to -inf
+    RUP = 0x011, // round to +inf
+    RMM = 0b100, // round to nearest, max abs
+    DYN = 0b111, // dynamic from frm
+};
+
+enum class CSR {
+    fflags = 0x001, // exceptions
+    frm = 0x002, // rounding mode
+    fcsr = 0x003, //
 };
 
 } // namespace isa

@@ -5,5 +5,6 @@
 #include "isa/ext_m_cb.hpp"
 #include "isa/ext_zbb_cb.hpp"
 #include "isa/ext_zicsr_cb.hpp"
+#include "isa/ext_f_cb.hpp"
 
 #endif // ISA_CB_HPP_

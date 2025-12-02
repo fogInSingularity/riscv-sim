@@ -22,4 +22,5 @@ target_link_libraries(sim
 
         spdlog
         elfio::elfio
+        softfloat
 )

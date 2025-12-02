@@ -30,7 +30,7 @@ int RVSim::Execute() {
         instr_callback(this, undecoded_insn);
     }
 
-    return xregs[hlp::FromEnum(isa::XRegAlias::a0)];
+    return xregs_[hlp::FromEnum(isa::XRegAlias::a0)];
 }
 
 } // namespace sim

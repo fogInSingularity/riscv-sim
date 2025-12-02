@@ -6,6 +6,7 @@ target_sources(isa
         source/ext_m_cb.cpp
         source/ext_zbb_cb.cpp
         source/ext_zicsr_cb.cpp
+        source/ext_f_cb.cpp
         source/mnemonics.cpp
         source/syscall_handler.cpp
 )
@@ -20,4 +21,6 @@ target_link_libraries(isa
         sim-flags
         sim
         helpers
+
+        softfloat
 )

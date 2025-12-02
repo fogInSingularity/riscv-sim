@@ -29,6 +29,14 @@ inline WRegister WIRegToWReg(WIRegister val) {
     return std::bit_cast<WRegister>(val);
 }
 
+inline FRegister RegToFReg(Register val) {
+    return std::bit_cast<FRegister>(val);
+}
+
+inline Register FRegToReg(FRegister val) {
+    return std::bit_cast<Register>(val);
+}
+
 template <typename T>
 constexpr bool IsBitSet(T val, size_t index) {
     static_assert(std::is_unsigned_v<T>, "T must be an unsigned type");

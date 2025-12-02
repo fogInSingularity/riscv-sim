@@ -11,6 +11,7 @@
 #include "sim/rv_sim.hpp"
 
 int main(int argc, const char* argv[]) {
+
     auto logger = spdlog::basic_logger_mt("sim", "sim.log", true);
     spdlog::set_default_logger(logger);
 
