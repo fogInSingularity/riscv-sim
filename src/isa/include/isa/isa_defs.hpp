@@ -26,6 +26,7 @@ constexpr size_t kXlenByte = sizeof(Register);
 constexpr size_t kXlen = kXlenByte * CHAR_BIT;
 constexpr size_t kFlenByte = sizeof(FRegister);
 constexpr size_t kFlen = kFlenByte * CHAR_BIT;
+
 constexpr size_t kStepSize = sizeof(UndecodedInsn);
 
 constexpr size_t kNumXRegisters = 32;

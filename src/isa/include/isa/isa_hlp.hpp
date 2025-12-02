@@ -46,6 +46,7 @@ constexpr bool IsBitSet(T val, size_t index) {
     return (val & one_hot) == one_hot;
 }
 
+// TruncHigh means save low bits
 template <typename ToT, typename FromT>
 constexpr ToT TruncHigh(FromT x) {
     static_assert(std::is_integral_v<FromT>, "FromT must be an integral type");
@@ -67,6 +68,7 @@ constexpr ToT TruncHigh(FromT x) {
     return static_cast<ToT>(uy);
 }
 
+// TruncLow means save high bits
 template <typename ToT, typename FromT>
 constexpr ToT TruncLow(FromT x) {
     static_assert(std::is_integral_v<FromT>, "FromT must be an integral type");

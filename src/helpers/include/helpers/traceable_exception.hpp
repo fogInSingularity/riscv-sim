@@ -47,8 +47,9 @@ class TraceableException : public std::runtime_error {
     {
         spdlog::error(err_msg);
         if (!generate_trace) { return ; }
-
-        dump_trace();       
+#if !defined(NDEBUG)
+        dump_trace();
+#endif // NDEBUG
     }
 };
 

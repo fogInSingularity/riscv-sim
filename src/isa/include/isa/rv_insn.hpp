@@ -69,7 +69,7 @@ class RvInsn {
 
     uint32_t Shamt() const {
         constexpr uint32_t kShamtShift = 20;
-        constexpr uint32_t kShamtMask  = 0x1Fu; // 5 bits for RV32
+        constexpr uint32_t kShamtMask  = 0x1Fu;
         return (raw_insn_ >> kShamtShift) & kShamtMask;
     }
 
@@ -131,11 +131,12 @@ class RvInsn {
         uint32_t bit11     = (raw_insn_ >> 20) & 0x1u;
         uint32_t bits19_12 = (raw_insn_ >> 12) & 0xFFu;
 
-        uint32_t imm =
-            (bit20     << 20) |
-            (bits19_12 << 12) |
-            (bit11     << 11) |
-            (bits10_1  << 1);
+        uint32_t imm = (
+            (bit20     << 20) 
+            | (bits19_12 << 12) 
+            | (bit11     << 11) 
+            | (bits10_1  << 1)
+        );
 
         auto sext = SignExtend(imm, kImmBits);
         spdlog::trace("j immid: {}", sext);
