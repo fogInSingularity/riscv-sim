@@ -1,4 +1,4 @@
-name: build action
+name: build and test action
 on: [push, pull_request]
 jobs:
   build:
@@ -12,7 +12,6 @@ jobs:
         build_type: [Debug, Release]
     steps:
       - name: clone
-        id: checkout
         uses: actions/checkout@v4
 
       - name: install deps
@@ -22,9 +21,7 @@ jobs:
             build-essential \
             cmake \
             clang \
-            lld \
-            git \
-            gcc-riscv64-unknown-elf
+            lld
 
       - name: build
         run: |
@@ -34,6 +31,38 @@ jobs:
             -DCMAKE_C_COMPILER="${{matrix.compiler.cc}}" \
             -DCMAKE_CXX_COMPILER="${{matrix.compiler.cxx}}"
           cmake --build build --parallel 4
+
+      - name: store sim artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: riscv-sim-${{ matrix.compiler.name }}-${{ matrix.build_type }}
+          path: build/riscv-sim.x
+
+  test:
+    needs: build
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        compiler_name: [clang]
+        build_type: [Debug, Release]
+
+    steps:
+      - name: clone
+        uses: actions/checkout@v4
+
+      - name: install deps
+        run: | 
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            git \
+            gcc-riscv64-unknown-elf
+      
+      - name: load sim artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: riscv-sim-${{ matrix.compiler_name }}-${{ matrix.build_type }}
+          path: build
 
       - name: clone risc-v tests
         if: matrix.compiler.name == 'clang'
