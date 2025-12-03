@@ -11,7 +11,6 @@
 #include "sim/program_args.hpp"
 #include "sim/rv_sim.hpp"
 
-// FIXME пофиксить лог, чтоб не срать в релизе точно
 int main(int argc, const char* argv[]) {
 
     auto logger = spdlog::basic_logger_mt("sim", "sim.log", true);
