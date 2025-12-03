@@ -8,6 +8,7 @@
 
 #include "helpers/traceable_exception.hpp"
 #include "sim/elf_loader.hpp"
+#include "sim/program_args.hpp"
 #include "sim/rv_sim.hpp"
 
 // FIXME пофиксить лог, чтоб не срать в релизе точно
@@ -38,6 +39,8 @@ int main(int argc, const char* argv[]) {
 
         return EXIT_FAILURE;
     }
+    
+    sim::ProgramArgs prog_args{argc, argv};
 
     sim::ParsedElf parsed_elf{};
 
@@ -50,7 +53,7 @@ int main(int argc, const char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    sim::RVSim sim{parsed_elf};
+    sim::RVSim sim{parsed_elf, prog_args};
 
     return sim.Execute();
 }

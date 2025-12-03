@@ -36,6 +36,8 @@ constexpr size_t kStackSize = 1u << 20; // 1 mb
 constexpr Address kStackTop = 1u << 30; // some high address
 constexpr Address kStackBase = kStackTop - kStackSize;
 
+constexpr Address kArgvBase = kStackTop + sizeof(Register);
+
 // register aliases
 // https://riscv.org/wp-content/uploads/2024/12/riscv-calling.pdf
 enum class XRegAlias : uint32_t {

@@ -15,6 +15,7 @@
 #include "sim/memory.hpp"
 #include "isa/isa_defs.hpp"
 #include "sim/elf_loader.hpp"
+#include "sim/program_args.hpp"
 
 namespace sim {
 
@@ -30,7 +31,7 @@ class RVSim {
     FRegArrayT fregs_;
     isa::Register fcsr_; // float csr
   public:
-    explicit RVSim(const ParsedElf parsed_elf)
+    explicit RVSim(const ParsedElf& parsed_elf, const ProgramArgs& prog_args)
         : memory_{parsed_elf.mem}, 
         ip_{parsed_elf.entry_point}, 
         should_stop_{false},
@@ -39,19 +40,47 @@ class RVSim {
         fcsr_{0}
     {
         // add stack 
-        memory_.AddSegment(
-            MemorySegm{
-                isa::kStackBase, 
-                isa::kStackTop, 
-                decltype(MemorySegm::data)(isa::kStackSize),
-                true,
-                true,
-                false
-            }  
-        );
+        auto stack_segm = MemorySegm{
+            isa::kStackBase, 
+            isa::kStackTop, // top not included
+            decltype(MemorySegm::data)(isa::kStackSize),
+            true,
+            true,
+            false
+        };  
+
+        auto argv_size = prog_args.SizeOfArgv();
+        
+        auto argv_segm = MemorySegm{
+            isa::kArgvBase,
+            isa::kArgvBase + argv_size + decltype(isa::kArgvBase){sizeof(isa::Register)}, 
+            decltype(MemorySegm::data)(argv_size),
+            true,
+            false,
+            false,
+        };
+        auto argc = prog_args.Argc();
+        auto offset_table = prog_args.CopyArgv(argv_segm.data.data());
+
+        isa::Address argv_fill_start = isa::kStackTop - sizeof(isa::Register) * (argc + 2 /*argc + argv == NULL*/);
+        auto fill_addr = stack_segm.data.data() + argv_fill_start - isa::kStackBase;
+        std::memcpy(fill_addr, &argc, sizeof(isa::Register));
+        fill_addr += sizeof(isa::Register);
+
+        for (int i = 0; i < prog_args.Argc(); i++) {
+            auto offset = isa::kArgvBase + offset_table[i];
+            std::memcpy(fill_addr, &offset, sizeof(isa::Register));
+            fill_addr += sizeof(isa::Register);
+        }
+
+        isa::Register null_ptr = 0;
+        std::memcpy(fill_addr, &null_ptr, sizeof(null_ptr));
+
+        memory_.AddSegment(stack_segm);
+        memory_.AddSegment(argv_segm);
 
         xregs_[hlp::FromEnum(isa::XRegAlias::gp)] = parsed_elf.global_ptr;
-        xregs_[hlp::FromEnum(isa::XRegAlias::sp)] = isa::kStackTop - sizeof(isa::Register);
+        xregs_[hlp::FromEnum(isa::XRegAlias::sp)] = argv_fill_start;
     }
 
     int Execute();
