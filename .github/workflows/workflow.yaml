@@ -14,10 +14,18 @@ jobs:
       - name: clone
         id: checkout
         uses: actions/checkout@v4
+
       - name: install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake clang lld
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            clang \
+            lld \
+            git \
+            gcc-riscv64-unknown-elf
+
       - name: build
         run: |
           cmake -S . -B build \
@@ -26,3 +34,15 @@ jobs:
             -DCMAKE_C_COMPILER="${{matrix.compiler.cc}}" \
             -DCMAKE_CXX_COMPILER="${{matrix.compiler.cxx}}"
           cmake --build build --parallel 4
+
+      - name: clone risc-v tests
+        if: matrix.compiler.name == 'clang'
+        run: |
+          git clone --depth 1 https://gitlab.com/iDang3r/riscv-interpreter-task.git
+
+      - name: run risc-v tests
+        if: matrix.compiler.name == 'clang'
+        working-directory: riscv-interpreter-task
+        run: |
+          make test INTERPRETER="${{ github.workspace }}/build/riscv-sim.x"
+
